@@ -33,7 +33,7 @@ export const PostsList: React.FC = () => (
           </td>
         </tr>
 
-        <tr data-cy="Post">
+        {/* <tr data-cy="Post">
           <td data-cy="PostId">18</td>
 
           <td data-cy="PostTitle">
@@ -79,7 +79,7 @@ export const PostsList: React.FC = () => (
               Open
             </button>
           </td>
-        </tr>
+        </tr> */}
       </tbody>
     </table>
   </div>
