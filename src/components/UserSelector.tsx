@@ -14,12 +14,6 @@ export const UserSelector: React.FC<Props> = ({
 }) => {
   const [onClick, setOnClick] = useState(false);
 
-  // const handleSelect = (user: User) => {
-  //   console.log('click');
-  //   onSelect(user);
-  //   setOnClick(false);
-  // };
-
   return (
     <div
       data-cy="UserSelector"
@@ -32,7 +26,6 @@ export const UserSelector: React.FC<Props> = ({
           aria-haspopup="true"
           aria-controls="dropdown-menu"
           onClick={() => setOnClick(!onClick)}
-          onBlur={() => setOnClick(false)}
         >
           <span>{selectedUser ? selectedUser.name : `Choose a user`}</span>
 
@@ -51,7 +44,7 @@ export const UserSelector: React.FC<Props> = ({
               key={user.id}
               onClick={() => {
                 onSelect(user);
-                setOnClick(false);
+                setOnClick(prev => !prev);
               }}
             >
               {user.name}

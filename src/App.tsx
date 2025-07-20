@@ -12,6 +12,7 @@ import * as postsService from './api/api';
 import { useEffect, useState } from 'react';
 import { User } from './types/User';
 import { Post } from './types/Post';
+import { Comment } from './types/Comment';
 
 export const App: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -19,6 +20,10 @@ export const App: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [userPosts, setUserPosts] = useState<Post[] | null>(null);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [arePostsLoading, setArePostsLoading] = useState(false);
+  const [postComments, setPostComments] = useState<Comment[] | null>(null);
+  const [isCommentsLoading, setIsCommentsLoading] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -30,16 +35,43 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setIsLoading(true);
-
-    if (selectedUser) {
-      postsService
-        .getUserPosts(selectedUser.id)
-        .then(posts => setUserPosts(posts))
-        .catch(() => setErrorMessage('Something went wrong'))
-        .finally(() => setIsLoading(false));
+    if (!selectedUser) {
+      return;
     }
+
+    setSelectedPost(null);
+    setArePostsLoading(true);
+    setUserPosts(null);
+    postsService
+      .getUserPosts(selectedUser.id)
+      .then(posts => setUserPosts(posts))
+      .catch(() => setErrorMessage('Something went wrong'))
+      .finally(() => setArePostsLoading(false));
   }, [selectedUser]);
+
+  useEffect(() => {
+    if (!selectedPost) {
+      return;
+    }
+
+    setIsCommentsLoading(true);
+    setPostComments(null);
+    postsService
+      .getPostComments(selectedPost.id)
+      .then(comments => setPostComments(comments))
+      .catch(() => setErrorMessage('Something went wrong'))
+      .finally(() => setIsCommentsLoading(false));
+  }, [selectedPost]);
+
+  const handleAddComment = (newComment: Comment) => {
+    setPostComments(prevComments =>
+      prevComments ? [...prevComments, newComment] : [newComment],
+    );
+  };
+
+  const handleTogglePost = (post: Post) => {
+    setSelectedPost(prev => (prev?.id === post.id ? null : post));
+  };
 
   return (
     <main className="section">
@@ -61,39 +93,61 @@ export const App: React.FC = () => {
                 )}
 
                 {isLoading && <Loader />}
+                {arePostsLoading && <Loader />}
 
-                {/* <Loader /> */}
+                {errorMessage && (
+                  <div
+                    className="notification is-danger"
+                    data-cy="PostsLoadingError"
+                  >
+                    {errorMessage}
+                  </div>
+                )}
 
-                <div
-                  className="notification is-danger"
-                  data-cy="PostsLoadingError"
-                >
-                  {errorMessage}
-                </div>
-
-                {/* <div className="notification is-warning" data-cy="NoPostsYet">
-                  No posts yet
-                </div> */}
-
-                {userPosts && <PostsList />}
+                {selectedUser &&
+                  !arePostsLoading &&
+                  (userPosts && userPosts.length === 0 ? (
+                    <div
+                      className="notification is-warning"
+                      data-cy="NoPostsYet"
+                    >
+                      No posts yet
+                    </div>
+                  ) : (
+                    <PostsList
+                      userPosts={userPosts ?? []}
+                      onTogglePost={handleTogglePost}
+                      currentSelectedPostId={
+                        selectedPost ? selectedPost.id : null
+                      }
+                    />
+                  ))}
               </div>
             </div>
           </div>
 
-          <div
-            data-cy="Sidebar"
-            className={classNames(
-              'tile',
-              'is-parent',
-              'is-8-desktop',
-              'Sidebar',
-              'Sidebar--open',
-            )}
-          >
-            <div className="tile is-child box is-success ">
-              <PostDetails />
+          {selectedPost && (
+            <div
+              data-cy="Sidebar"
+              className={classNames(
+                'tile',
+                'is-parent',
+                'is-8-desktop',
+                'Sidebar',
+                'Sidebar--open',
+              )}
+            >
+              <div className="tile is-child box is-success ">
+                <PostDetails
+                  selectedPost={selectedPost}
+                  errorMessage={errorMessage}
+                  postComments={postComments}
+                  isCommentsLoading={isCommentsLoading}
+                  onAddComment={handleAddComment}
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </main>
