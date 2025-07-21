@@ -626,7 +626,7 @@ describe('', () => {
     });
 
     describe('', () => {
-      it.skip('should not be open by default', () => {
+      it('should not be open by default', () => {
         page.sidebar().should('not.have.class', 'Sidebar--open');
       });
 

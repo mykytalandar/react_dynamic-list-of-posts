@@ -63,7 +63,7 @@ export const UserSelector: React.FC<Props> = ({
               key={user.id}
               onClick={() => {
                 onSelect(user);
-                setOnClick(prev => !prev);
+                setOnClick(false);
               }}
             >
               {user.name}
