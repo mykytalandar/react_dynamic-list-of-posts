@@ -132,18 +132,18 @@ export const App: React.FC = () => {
             </div>
           </div>
 
-          {selectedPost && (
-            <div
-              data-cy="Sidebar"
-              className={classNames(
-                'tile',
-                'is-parent',
-                'is-8-desktop',
-                'Sidebar',
-                'Sidebar--open',
-              )}
-            >
-              <div className="tile is-child box is-success ">
+          <div
+            data-cy="Sidebar"
+            className={classNames(
+              'tile',
+              'is-parent',
+              'is-8-desktop',
+              'Sidebar',
+              selectedPost && 'Sidebar--open',
+            )}
+          >
+            <div className="tile is-child box is-success ">
+              {selectedPost && (
                 <PostDetails
                   selectedPost={selectedPost}
                   errorMessage={errorMessage}
@@ -152,9 +152,9 @@ export const App: React.FC = () => {
                   onAddComment={handleAddComment}
                   removeCommentById={removeCommentById}
                 />
-              </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
     </main>
