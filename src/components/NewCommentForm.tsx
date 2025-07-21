@@ -54,6 +54,9 @@ export const NewCommentForm: React.FC<Props> = ({ onAddComment, postId }) => {
     setName('');
     setEmail('');
     setBody('');
+    setNameError(false);
+    setEmailError(false);
+    setBodyError(false);
   };
 
   return (

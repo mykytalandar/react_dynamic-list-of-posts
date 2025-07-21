@@ -65,7 +65,7 @@ export const PostDetails: React.FC<Props> = ({
                   data-cy="Comment"
                   key={comment.id}
                 >
-                  <div className="message-header" key={comment.id}>
+                  <div className="message-header">
                     <a href={`mailto:${comment.email}`} data-cy="CommentAuthor">
                       {comment.name}
                     </a>
@@ -88,7 +88,7 @@ export const PostDetails: React.FC<Props> = ({
             </>
           )}
 
-          {!showAddCommentForm && !isCommentsLoading && (
+          {!showAddCommentForm && !isCommentsLoading && !errorMessage && (
             <button
               data-cy="WriteCommentButton"
               type="button"
@@ -100,7 +100,7 @@ export const PostDetails: React.FC<Props> = ({
           )}
         </div>
 
-        {showAddCommentForm && (
+        {showAddCommentForm && !isCommentsLoading && !errorMessage && (
           <NewCommentForm
             onAddComment={onAddComment}
             postId={selectedPost.id}
