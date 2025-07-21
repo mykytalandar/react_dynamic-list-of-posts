@@ -73,6 +73,12 @@ export const App: React.FC = () => {
     setSelectedPost(prev => (prev?.id === post.id ? null : post));
   };
 
+  const removeCommentById = (commentId: number) => {
+    setPostComments(
+      comments => comments?.filter(comment => comment.id !== commentId) || null,
+    );
+  };
+
   return (
     <main className="section">
       <div className="container">
@@ -144,6 +150,7 @@ export const App: React.FC = () => {
                   postComments={postComments}
                   isCommentsLoading={isCommentsLoading}
                   onAddComment={handleAddComment}
+                  removeCommentById={removeCommentById}
                 />
               </div>
             </div>

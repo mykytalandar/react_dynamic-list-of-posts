@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { User } from '../types/User';
 
 type Props = {
@@ -13,11 +13,30 @@ export const UserSelector: React.FC<Props> = ({
   onSelect,
 }) => {
   const [onClick, setOnClick] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setOnClick(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div
       data-cy="UserSelector"
       className={`dropdown ${onClick && `is-active`}`}
+      ref={dropdownRef}
     >
       <div className="dropdown-trigger">
         <button
@@ -25,7 +44,7 @@ export const UserSelector: React.FC<Props> = ({
           className="button"
           aria-haspopup="true"
           aria-controls="dropdown-menu"
-          onClick={() => setOnClick(!onClick)}
+          onClick={() => setOnClick(prev => !prev)}
         >
           <span>{selectedUser ? selectedUser.name : `Choose a user`}</span>
 

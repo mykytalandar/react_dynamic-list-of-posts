@@ -11,6 +11,7 @@ type Props = {
   postComments: Comment[] | null;
   isCommentsLoading: boolean;
   onAddComment: (comment: Comment) => void;
+  removeCommentById: (commentId: number) => void;
 };
 
 export const PostDetails: React.FC<Props> = ({
@@ -19,34 +20,17 @@ export const PostDetails: React.FC<Props> = ({
   postComments,
   isCommentsLoading,
   onAddComment,
+  removeCommentById,
 }) => {
-  const [comments, setComments] = useState<Comment[]>([]);
   const [showAddCommentForm, setShowAddCommentForm] = useState(false);
 
-  // useEffect(() => {
-  //   setComments(postComments || []);
-  // }, [postComments]);
-
-  // useEffect(() => {
-  //   if (postComments) {
-  //     setComments(postComments);
-  //   }
-  // }, [postComments]);
-
-  // useEffect(() => {
-  //   setOnClick(false);
-  // }, [selectedPost]);
-
   useEffect(() => {
-    setComments(postComments || []);
     setShowAddCommentForm(false);
-  }, [postComments, selectedPost]);
+  }, [selectedPost]);
 
-  const handleDeleteComment = (commentId: number) => {
-    setComments(prevComments =>
-      prevComments.filter(comment => comment.id !== commentId),
-    );
-    deleteComment(commentId);
+  const handleDeleteComment = async (commentId: number) => {
+    removeCommentById(commentId);
+    await deleteComment(commentId);
   };
 
   return (
@@ -67,7 +51,7 @@ export const PostDetails: React.FC<Props> = ({
             </div>
           )}
 
-          {!isCommentsLoading && comments.length === 0 ? (
+          {!isCommentsLoading && postComments && postComments.length === 0 ? (
             <p className="title is-4" data-cy="NoCommentsMessage">
               No comments yet
             </p>
@@ -75,7 +59,7 @@ export const PostDetails: React.FC<Props> = ({
             <>
               {!isCommentsLoading && <p className="title is-4">Comments:</p>}
 
-              {comments.map(comment => (
+              {postComments?.map(comment => (
                 <article
                   className="message is-small"
                   data-cy="Comment"
